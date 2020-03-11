@@ -19,7 +19,9 @@ def main():
         else:
             player = 'red'
         c.put(player, i)
-        if c.win() == True:
+        winner = c.win()
+        if winner == 'Black' or winner == 'Red':
+            c.display()
             return
         turn += 1
 

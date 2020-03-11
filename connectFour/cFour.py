@@ -15,7 +15,7 @@ class cFour():
         if player == 'black':
             self.grid[5 - self.amounts[column]][column] = 'B'
         elif player == 'red':
-            self.grid[5 - self.amounts[column]]s[column] = 'R'
+            self.grid[5 - self.amounts[column]][column] = 'R'
         else:
             print('error: invalid player code')
             return -1
