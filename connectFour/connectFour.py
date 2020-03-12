@@ -12,16 +12,21 @@ def main():
     turn = 1
     while True:
         c.display()
-        i = int(input("Select column to place piece: "))
         player = ''
         if turn%2 == 1:
             player = 'black'
         else:
             player = 'red'
-        c.put(player, i)
+        print(player + '\'s turn')
+        i = int(input("Select column to place piece (0-6): "))
+        flag = c.put(player, i)
+        if flag == 0:
+            print('Invalid column, try again.')
+            continue
         winner = c.win()
         if winner == 'Black' or winner == 'Red':
             c.display()
+            print(winner + ' wins!')
             return
         turn += 1
 
