@@ -31,6 +31,13 @@ class cFour():
                 print(self.grid[i][j], end = ' ')
             print()
         return
+    
+    def full(self):
+        for i in range(6):
+            for j in range(7):
+                if self.grid[i][j] != 'B' or self.grid[i][j] != 'R':
+                    return 'not full'
+        return 'full'
 
     def win(self):
         for i in range(6):
@@ -38,20 +45,20 @@ class cFour():
                 if self.grid[i][j] == 'B':
                     w = self.checkRC(i, j, 'B')
                     if w >= 4:
-                        return 'Black', w
+                        return 'black', w
                     w = self.checkDiag(i, j, 'B')
                     if w >= 4:
-                        return 'Black', w
+                        return 'black', w
                 elif self.grid[i][j] == 'R':
                     w = self.checkRC(i, j, 'R')
                     if w >= 4:
-                        return 'Red', w
+                        return 'red', w
                     w = self.checkDiag(i, j, 'R')
                     if w >= 4:
-                        return 'Red', w
+                        return 'red', w
                 else:
                     continue
-        return 'none', w
+        return self.full(), w
 
     def checkRC(self, i, j, player):
         n = 0
