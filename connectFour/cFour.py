@@ -1,3 +1,4 @@
+import player
 class cFour():
     def __init__(self):
         self.grid = []
@@ -11,9 +12,9 @@ class cFour():
 
     def put(self, player, column):
         if column > 6 or column < 0:
-            return 0
+            return -5, 5 - self.amounts[column]
         if self.amounts[column] == 6:
-            return 0
+            return -5, 5 - self.amounts[column]
         if player == 'black':
             self.grid[5 - self.amounts[column]][column] = 'B'
         elif player == 'red':
@@ -22,7 +23,7 @@ class cFour():
             print('error: invalid player code')
             exit(-1)
         self.amounts[column] += 1
-        return 1
+        return 0, 5 - self.amounts[column] + 1
 
     def display(self):
         for i in range(6):
@@ -36,40 +37,62 @@ class cFour():
             for j in range(7):
                 if self.grid[i][j] == 'B':
                     w = self.checkRC(i, j, 'B')
-                    if w == True:
-                        return 'Black'
+                    if w >= 4:
+                        return 'Black', w
                     w = self.checkDiag(i, j, 'B')
-                    if w == True:
-                        return 'Black'
+                    if w >= 4:
+                        return 'Black', w
                 elif self.grid[i][j] == 'R':
                     w = self.checkRC(i, j, 'R')
-                    if w == True:
-                        return 'Red'
+                    if w >= 4:
+                        return 'Red', w
                     w = self.checkDiag(i, j, 'R')
-                    if w == True:
-                        return 'Red'
+                    if w >= 4:
+                        return 'Red', w
                 else:
                     continue
-        return None
+        return 'none', w
 
     def checkRC(self, i, j, player):
-        inRow = 0
-        for column in range(7):
-            if self.grid[i][column] == player:
-                inRow += 1
-            else:
-                inRow = 0
-            if inRow >= 4:
-                return True
-        inColumn = 0
-        for row in range(6):
-            if self.grid[row][j] == player:
-                inColumn += 1
-            else:
-                inColumn = 0
-            if inColumn >= 4:
-                return True
-        return False
+        n = 0
+        s = 0
+        e = 0
+        w = 0
+        for count in range(1,4):
+            cont = True
+            if i + count < 6:
+                if self.grid[i + count][j] == player:
+                    if cont == True:
+                        s += 1
+                else:
+                    cont = False
+            cont = True
+            if i - count >= 0:
+                if self.grid[i - count][j] == player:
+                    if cont == True:
+                        n += 1
+                else:
+                    cont = False
+            cont = True
+            if j + count < 7:
+                if self.grid[i][j + count] == player:
+                    if cont == True:
+                        w += 1
+                else:
+                    cont = False
+            cont = True
+            if j - count >= 0:
+                if self.grid[i][j - count] == player:
+                    if cont == True:
+                        e += 1
+                else:
+                    cont = False
+        r = e + w + 1
+        c = n + s + 1
+        if r > c:
+            return r
+        return c
+
     '''
     checks diags of piece around origin i, j.
     counts the pieces in each of the diag directions
@@ -87,22 +110,53 @@ class cFour():
         y = j
         #check in order: se -> nw -> sw -> ne
         for count in range(1,4):
+            cont = True
             #check se
             if i + count < 6 and j + count < 7:
                 if self.grid[i + count][j + count] == player:
-                    se += 1
+                    if cont == True:
+                        se += 1
+                else:
+                    cont = False
+            cont = True
             #check nw
             if i - count >= 0 and j - count >= 0:
                 if self.grid[i - count][j - count] == player:
-                    nw += 1
+                    if cont == True:
+                        nw += 1
+                else:
+                    cont = False
+            cont = True
             #check sw
             if i + count < 6 and j - count >= 0:
                 if self.grid[i + count][j - count] == player:
-                    sw += 1
+                    if cont == True:
+                        sw += 1
+                else:
+                    cont = False
+            cont = True
             #check ne
             if i - count >= 0 and j + count < 7:
                 if self.grid[i - count][j + count] == player:
-                    ne += 1
-        if se + nw + 1 >= 4 or sw + ne + 1 >= 4:
-            return True
-        return False
+                    if cont == True:
+                        ne += 1
+                else:
+                    cont = False
+        diag1 = se + nw + 1
+        diag2 = sw + ne + 1
+        if diag1 > diag2:
+            return diag1
+        return diag2
+
+    def state(self):
+        state = ''
+        for i in range(6):
+            for j in range(7):
+                state += self.grid[i][j]
+        return state
+
+    def step(self, player, action):#for rl algorithm
+        reward, row = self.put(player, action)
+        done, r2 = self.win()
+        reward += r2
+        return self.state(), reward, done

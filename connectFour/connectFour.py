@@ -19,11 +19,11 @@ def main():
             player = 'red'
         print(player + '\'s turn')
         i = int(input("Select column to place piece (0-6): "))
-        flag = c.put(player, i)
-        if flag == 0:
+        flag, r = c.put(player, i)
+        if flag == -5:
             print('Invalid column, try again.')
             continue
-        winner = c.win()
+        winner, r = c.win()
         if winner == 'Black' or winner == 'Red':
             c.display()
             print(winner + ' wins!')
