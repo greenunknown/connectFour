@@ -44,7 +44,7 @@ class rl():
             r += reward
         return nextState, r, action, done
 
-    def qLearningInit(self, episodes = 10000, eta = 0.2, gamma = 0.9, epsilon = 0.1):
+    def qLearningInit(self, episodes = 100000, eta = 0.5, gamma = 0.9, epsilon = 0.1):
         q = defaultdict(lambda: np.zeros(self.actionSpace))
         #q2 = defaultdict(lambda: np.zeros(self.actionSpace))
         player2 = None
@@ -103,7 +103,7 @@ class rl():
                 g2state = g2nextState
                 continue
             self.q = q
-            break;
+            break
         return self.qLearning(player2, episodes - 1, g1rewards, g2rewards, eta, gamma, epsilon)
 
     def qLearning(self, player2, episodes, g1episodeRewards, g2episodeRewards, eta, gamma, epsilon):
@@ -153,7 +153,7 @@ class rl():
                     continue
                 self.q = p1q
                 p2q = copyQ(p1q, self.actionSpace)
-                break;
+                break
             #decrease epsilon
             if(e + 1) % 50 == 0:
                 if(epsilon > 0):
@@ -173,7 +173,7 @@ class rl():
             if done != 'not full':
                 c4.display()
                 winner = done
-                break;
+                break
             c4.display()
             whosturn = 'red'
             print(whosturn + '\' turn')
@@ -185,7 +185,7 @@ class rl():
             if p2d != 'not full':
                 c4.display()
                 winner = p2d
-                break;
+                break
             state = nextState
         return winner
 
