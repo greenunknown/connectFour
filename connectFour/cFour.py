@@ -56,7 +56,12 @@ class cFour():
 
     def checkRC(self, i, j, player):
         """
-        Check
+        Checks rows and columns of piece around origin i, j.
+        Counts the pieces in vertical and horizontal directions
+        and adds them. Counting does not include origin piece,
+        so + 1 will be added when checking.
+        e + w + 1
+        n + s + 1
         :param i:
         :param j:
         :param player:
@@ -67,34 +72,38 @@ class cFour():
         e = 0
         w = 0
         for count in range(1, 4):
-            cont = True
+            # cont = True
             if i + count < 6:
                 if self.grid[i + count][j] == player:
-                    if cont:
-                        s += 1
-                else:
-                    cont = False
-            cont = True
+                    s += 1
+                #     if cont:
+                #         s += 1
+                # else:
+                #     cont = False
+            # cont = True
             if i - count >= 0:
                 if self.grid[i - count][j] == player:
-                    if cont:
-                        n += 1
-                else:
-                    cont = False
-            cont = True
+                    n += 1
+                #     if cont:
+                #         n += 1
+                # else:
+                #     cont = False
+            # cont = True
             if j + count < 7:
                 if self.grid[i][j + count] == player:
-                    if cont:
-                        w += 1
-                else:
-                    cont = False
-            cont = True
+                    w += 1
+            #         if cont:
+            #             w += 1
+            #     else:
+            #         cont = False
+            # cont = True
             if j - count >= 0:
                 if self.grid[i][j - count] == player:
-                    if cont:
-                        e += 1
-                else:
-                    cont = False
+                    e += 1
+                #     if cont:
+                #         e += 1
+                # else:
+                #     cont = False
         r = e + w + 1
         c = n + s + 1
         if r > c:
@@ -103,9 +112,9 @@ class cFour():
 
     def checkDiag(self, i, j, player):
         """
-        checks diags of piece around origin i, j.
-        counts the pieces in each of the diag directions
-        and adds them. counting does not include origin piece,
+        Checks diagonals of piece around origin i, j.
+        Counts the pieces in each of the diagonal directions
+        and adds them. Counting does not include origin piece,
         so + 1 will be added when checking.
         sw + ne + 1
         se + nw + 1
@@ -121,42 +130,26 @@ class cFour():
 
         # check in order: se -> nw -> sw -> ne
         for count in range(1, 4):
-            # cont = True
             # check se
             if i + count < 6 and j + count < 7:
                 if self.grid[i + count][j + count] == player:
                     se += 1
-                #     if cont:
-                #         se += 1
-                # else:
-                #     cont = False
-            # cont = True
+
             # check nw
             if i - count >= 0 and j - count >= 0:
                 if self.grid[i - count][j - count] == player:
                     nw += 1
-                #     if cont:
-                #         nw += 1
-                # else:
-                #     cont = False
-            # cont = True
+
             # check sw
             if i + count < 6 and j - count >= 0:
                 if self.grid[i + count][j - count] == player:
                     sw += 1
-                #     if cont:
-                #         sw += 1
-                # else:
-                #     cont = False
-            # cont = True
+
             # check ne
             if i - count >= 0 and j + count < 7:
                 if self.grid[i - count][j + count] == player:
                     ne += 1
-                #     if cont:
-                #         ne += 1
-                # else:
-                #     cont = False
+
         diag1 = se + nw + 1
         diag2 = sw + ne + 1
         if diag1 > diag2:
