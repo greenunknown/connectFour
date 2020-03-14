@@ -1,10 +1,20 @@
 class cFour():
+    """
+    A connect four board and methods to manipulate and
+    get information about the board.
+    """
     def __init__(self):
         self.grid = [['O' for i in range(7)] for j in range(6)]
         self.score = {'Red': 0, 'Black': 0, 'Winner': ''}
         self.amounts = [0, 0, 0, 0, 0, 0, 0]
 
     def put(self, player, column):
+        """
+        Put a player's chip on the board
+        :param player: Player's color
+        :param column: Column to add that player's chip to
+        :return:
+        """
         if column > 6 or column < 0:
             return -5, 5 - self.amounts[column]
         if self.amounts[column] == 6:
@@ -27,6 +37,10 @@ class cFour():
         return
 
     def full(self):
+        """
+        Determine if the grid is full (reached end game) or not.
+        :return: 'full' if the board is full, otherwise return 'not full'
+        """
         for i in range(6):
             for j in range(7):
                 if self.grid[i][j] != 'B' or self.grid[i][j] != 'R':
@@ -34,6 +48,10 @@ class cFour():
         return 'full'
 
     def win(self):
+        """
+
+        :return:
+        """
         for i in range(6):
             for j in range(7):
                 if self.grid[i][j] == 'B':
@@ -62,48 +80,30 @@ class cFour():
         so + 1 will be added when checking.
         e + w + 1
         n + s + 1
-        :param i:
-        :param j:
-        :param player:
-        :return:
+        :param i: Row of origin
+        :param j: Column of origin
+        :param player: Player's color we are checking
+        :return: The bigger of the two counts (horizontal or vertical)
         """
         n = 0
         s = 0
         e = 0
         w = 0
+
+        # Check in the following order: s -> n -> w -> e
         for count in range(1, 4):
-            # cont = True
             if i + count < 6:
                 if self.grid[i + count][j] == player:
                     s += 1
-                #     if cont:
-                #         s += 1
-                # else:
-                #     cont = False
-            # cont = True
             if i - count >= 0:
                 if self.grid[i - count][j] == player:
                     n += 1
-                #     if cont:
-                #         n += 1
-                # else:
-                #     cont = False
-            # cont = True
             if j + count < 7:
                 if self.grid[i][j + count] == player:
                     w += 1
-            #         if cont:
-            #             w += 1
-            #     else:
-            #         cont = False
-            # cont = True
             if j - count >= 0:
                 if self.grid[i][j - count] == player:
                     e += 1
-                #     if cont:
-                #         e += 1
-                # else:
-                #     cont = False
         r = e + w + 1
         c = n + s + 1
         if r > c:
@@ -118,10 +118,10 @@ class cFour():
         so + 1 will be added when checking.
         sw + ne + 1
         se + nw + 1
-        :param i:
-        :param j:
-        :param player:
-        :return:
+        :param i: Row of origin
+        :param j: Column of origin
+        :param player: Player's color we are checking
+        :return: The bigger of the two counts (bottom left to top right or top left to bottom right)
         """
         ne = 0
         nw = 0
@@ -157,13 +157,23 @@ class cFour():
         return diag2
 
     def state(self):
+        """
+
+        :return: Return the state
+        """
         state = ''
         for i in range(6):
             for j in range(7):
                 state += self.grid[i][j]
         return state
 
-    def step(self, player, action):  # for rl algorithm
+    def step(self, player, action):
+        """
+        Used in the RL algorithm to simulate moves.
+        :param player:
+        :param action:
+        :return:
+        """
         reward, row = self.put(player, action)
         done, r2 = self.win()
         reward += r2
