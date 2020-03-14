@@ -3,6 +3,7 @@ import minimax
 import rl
 import sys
 
+
 def main():
     if len(sys.argv) != 3:
         print('usage: python3 minimaxVsRl.py [player1] [player1]')
