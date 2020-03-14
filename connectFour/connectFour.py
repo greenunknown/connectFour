@@ -25,7 +25,7 @@ def main():
             print('Invalid column, try again.')
             continue
         winner, r = c.win()
-        if winner == 'Black' or winner == 'Red':
+        if winner == 'black' or winner == 'red':
             c.display()
             print(winner + ' wins!')
             return

@@ -16,7 +16,9 @@ class cFour():
         :return:
         """
         if column > 6 or column < 0:
-            return -5, 5 - self.amounts[column]
+            return -5, 0  # TODO FIX THE RETURN works for negative numbers
+                            # because of the way python lists work but not larger numbers
+                            # ORIGINAL # 5 - self.amounts[column]
         if self.amounts[column] == 6:
             return -5, 5 - self.amounts[column]
         if player == 'black':
