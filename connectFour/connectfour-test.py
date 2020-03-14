@@ -1,4 +1,5 @@
 from unittest import TestCase
+# from connectFour.connectFour.cFour import cFour
 import cFour
 
 
@@ -30,9 +31,3 @@ class TestCFour(TestCase):
 
     def testWin(self):
         pass
-
-
-
-
-# if __name__ == '__main__':
-#     unittest.main()
