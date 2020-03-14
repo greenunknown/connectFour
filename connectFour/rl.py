@@ -1,4 +1,3 @@
-import player
 import random
 from datetime import datetime
 import numpy as np

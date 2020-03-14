@@ -1,4 +1,3 @@
-import player
 class cFour():
     def __init__(self):
         self.grid = []

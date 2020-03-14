@@ -1,7 +1,5 @@
 import cFour
-import player
 import minimax
-import human
 import rl
 import sys
 
