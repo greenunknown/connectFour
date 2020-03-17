@@ -1,4 +1,7 @@
 
+# Written based on code from:
+#  https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-3-tic-tac-toe-ai-finding-optimal-move/
+
 class MinimaxConnectFour:
     def __init__(self):
         self.grid = [['O' for i in range(7)] for j in range(6)]
@@ -22,9 +25,17 @@ class MinimaxConnectFour:
         """
         placed = False
         while not placed:
-            if 6 <= column >= 0 and self.amounts[column] < 6:
-                placed = True
-                self.grid[self.amounts[column]][column] = player
+            if 0 <= column <= 6:
+                if self.amounts[column] < 6:
+                    placed = True
+                    self.grid[self.amounts[column]][column] = player
+                    self.amounts[column] += 1
+                    return [self.amounts[column], column]
+
+    def remove(self, player, column):
+        self.grid[self.amounts[column]][column] = 'O'
+        self.amounts[column] -= 1
+        return [self.amounts[column], column]
 
     def full(self):
         """
@@ -50,10 +61,10 @@ class MinimaxConnectFour:
         :param player: Player's color we are checking
         :return: The bigger of the two counts (horizontal or vertical)
         """
-        n = 1
-        s = 1
-        e = 1
-        w = 1
+        n = 0
+        s = 0
+        e = 0
+        w = 0
         nadd = True
         sadd = True
         eadd = True
@@ -84,12 +95,11 @@ class MinimaxConnectFour:
                     w += 1
                 else:
                     wadd = False
-        # r = e + w + 1
-        # c = n + s + 1
-        # if r > c:
-        #     return r
-        # return c
-        return max(s, n, e, w)
+
+        r = e + w + 1
+        c = n + s + 1
+
+        return max(r, c)
 
     def checkDiag(self, i, j, player):
         """
@@ -104,10 +114,10 @@ class MinimaxConnectFour:
         :param player: Player's color we are checking
         :return: The bigger of the two counts (bottom left to top right or top left to bottom right)
         """
-        ne = 1
-        nw = 1
-        se = 1
-        sw = 1
+        ne = 0
+        nw = 0
+        se = 0
+        sw = 0
 
         neadd = True
         nwadd = True
@@ -144,12 +154,9 @@ class MinimaxConnectFour:
                 else:
                     swadd = False
 
-        # diag1 = se + nw + 1
-        # diag2 = sw + ne + 1
-        # if diag1 > diag2:
-        #     return diag1
-        # return diag2
-        return max(se, ne, nw, sw)
+        diag1 = se + nw + 1
+        diag2 = sw + ne + 1
+        return max(diag1, diag2)
 
     def win(self, row, col):
         """
@@ -172,32 +179,13 @@ class MinimaxConnectFour:
             if w >= 4:
                 return self.players[1]
 
-        # for i in range(6):
-        #     for j in range(7):
-        #         if self.grid[i][j] == self.players[0]:
-        #             w = self.checkRC(i, j, self.players[0])
-        #             if w >= 4:
-        #                 return self.players[0]
-        #             w = self.checkDiag(i, j, self.players[0])
-        #             if w >= 4:
-        #                 return self.players[0]
-        #         elif self.grid[i][j] == self.players[1]:
-        #             w = self.checkRC(i, j, self.players[1])
-        #             if w >= 4:
-        #                 return self.players[1]
-        #             w = self.checkDiag(i, j, self.players[1])
-        #             if w >= 4:
-        #                 return self.players[1]
-        #         else:
-        #             continue
-
         if self.full():
             return 'T'
         else:
             return '...'
 
-    def evaluate(self):
-        winner = self.win()
+    def evaluate(self, row, col):
+        winner = self.win(row, col)
 
         if winner == self.players[0]:
             return 22
@@ -208,13 +196,52 @@ class MinimaxConnectFour:
         else:
             return 0
 
+    def minimax(self, depth, isMax, player, opponent, row, col):
+        score = self.evaluate(row, col)
 
-    def minimax(self, depth, isMax):
-        pass
+        if score == 22:
+            return score
 
+        if score == -22:
+            return score
+
+        if not self.full():
+            return 0
+
+        if isMax:
+            best = -1000
+            for i in range(7):
+                if self.amounts[i] < 5:
+                    self.place(player, i)
+                    best = max(best, self.minimax(depth + 1, not isMax, player, opponent))
+                    self.remove(player, i)
+            return best
+        else:
+            best = 1000
+            for i in range(7):
+                if self.amounts[i] < 5:
+                    self.place(player, i)
+                    best = max(best, self.minimax(depth + 1, not isMax, player, opponent))
+                    self.remove(player, i)
+            return best
 
     def findBestMove(self, player, opponent):
-        pass
+        bestVal = -1000
+        bestMove = -1
+        for i in range(7):
+            if self.amounts[i] < 5:
+                self.place(player, i)
+                moveVal = self.minimax(0, False, player, opponent)
+                self.remove(player, i)
+
+                if moveVal > bestVal:
+                    bestMove = i
+                    bestVal = moveVal
+
+        print(f"The value of the best move is: {bestMove}\n\n")
+
+        return bestMove
+
 
 def main():
     game = MinimaxConnectFour()
@@ -226,8 +253,9 @@ def main():
         # player_input_x = input("row: ")
         # player_input_y = input("col: ")
         # board[int(player_input_x)][int(player_input_y)] = 'x'
-
+        print("Player one")
         bestMove = game.findBestMove(game.players[0], game.players[1])
+        print("Placing piece")
         game.place(game.players[0], bestMove)
         print(f"The optimal move for {game.players[0]} is:\n")
         print(f"Row: {bestMove}\n\n")
