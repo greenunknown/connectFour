@@ -1,5 +1,5 @@
 
-class ConnectFour:
+class MinimaxConnectFour:
     def __init__(self):
         self.grid = [['O' for i in range(7)] for j in range(6)]
         self.score = {'Red': 0, 'Black': 0, 'Winner': ''}
@@ -151,29 +151,45 @@ class ConnectFour:
         # return diag2
         return max(se, ne, nw, sw)
 
-    def win(self):
+    def win(self, row, col):
         """
+        :param row: The row of the piece that was just placed.
+        :param col: The column of the piece that was just placed.
+        :return: The result of the lastest move if a player won, the game is a draw, or the game is ongoing
+        """
+        if self.grid[row][col] == self.players[0]:
+            w = self.checkRC(row, col, self.players[0])
+            if w >= 4:
+                return self.players[0]
+            w = self.checkDiag(row, col, self.players[0])
+            if w >= 4:
+                return self.players[0]
+        elif self.grid[row][col] == self.players[1]:
+            w = self.checkRC(row, col, self.players[1])
+            if w >= 4:
+                return self.players[1]
+            w = self.checkDiag(row, col, self.players[1])
+            if w >= 4:
+                return self.players[1]
 
-        :return:
-        """
-        for i in range(6):
-            for j in range(7):
-                if self.grid[i][j] == self.players[0]:
-                    w = self.checkRC(i, j, self.players[0])
-                    if w >= 4:
-                        return self.players[0]
-                    w = self.checkDiag(i, j, self.players[0])
-                    if w >= 4:
-                        return self.players[0]
-                elif self.grid[i][j] == self.players[1]:
-                    w = self.checkRC(i, j, self.players[1])
-                    if w >= 4:
-                        return self.players[1]
-                    w = self.checkDiag(i, j, self.players[1])
-                    if w >= 4:
-                        return self.players[1]
-                else:
-                    continue
+        # for i in range(6):
+        #     for j in range(7):
+        #         if self.grid[i][j] == self.players[0]:
+        #             w = self.checkRC(i, j, self.players[0])
+        #             if w >= 4:
+        #                 return self.players[0]
+        #             w = self.checkDiag(i, j, self.players[0])
+        #             if w >= 4:
+        #                 return self.players[0]
+        #         elif self.grid[i][j] == self.players[1]:
+        #             w = self.checkRC(i, j, self.players[1])
+        #             if w >= 4:
+        #                 return self.players[1]
+        #             w = self.checkDiag(i, j, self.players[1])
+        #             if w >= 4:
+        #                 return self.players[1]
+        #         else:
+        #             continue
 
         if self.full():
             return 'T'
@@ -188,13 +204,14 @@ class ConnectFour:
         elif winner == self.players[1]:
             return -22
         elif winner == 'T':
+            return 1
+        else:
             return 0
 
 
+    def minimax(board, depth, isMax):
+        pass
 
-def minimax(board, depth, isMax):
-    pass
 
-
-def findBestMove(board):
-    pass
+    def findBestMove(board):
+        pass
