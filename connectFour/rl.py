@@ -20,7 +20,36 @@ def copyQ(q, actionSpace):
         newq[item[0]] = np.copy(item[1])
     return newq
 
+def loadQTable(fileName, color):
+    with open(fileName) as f_obj:
+        lines = f_obj.readlines()
+    index = 0
+    qtable = defaultdict(lambda: np.zeros(7))
+    while index < len(lines):
+        state = lines[index][:len(lines[index]) - 1]
+        values = lines[index + 1][:len(lines[index + 1]) - 1]
+        '''
+        parse values to get numbers
+        '''
+        fvalues = []
+        value = ''
+        for c in values:
+            if c == ' ':
+                fvalues.append(float(value))
+                value = ''
+                continue
+            value += c
 
+        for i in range(len(qtable[state])):
+            qtable[state][i] += fvalues[i]
+        print(qtable[state])
+        print(fvalues)
+        index += 2
+    return rl(color, cFour.cFour(), qtable)
+
+
+def dataCalc(fileName):
+    return
 
 class rl():
     def __init__(self, color, board, q = None):
@@ -40,7 +69,10 @@ class rl():
             else:
                 action = epsilonGreedy(q, epsilon, state)
             nextState, reward, done = c4.step(player, action)
-            r += reward
+            r = reward
+            if action == np.argmax(q[state]) and nextState == state:
+                action = epsilonGreedy(q, epsilon, state)
+                nextState, reward, done = c4.step(player, action)
         return nextState, r, action, done
 
     def qLearningInit(self, episodes = 100000, eta = 0.5, gamma = 0.9, epsilon = 0.1):
@@ -66,7 +98,6 @@ class rl():
         g2done = 'not full'
         g2rDone = 'not full'
         for t in itertools.count():
-            print('Training - episode: 1 step: ' + str(t + 1))
             if g1done == 'not full' and g1rDone == 'not full':
                 g1tempnextState, g1reward, g1action, g1done = self.stateReward(q, g1state, self.color, g1, eta, gamma, epsilon)
                 g1nextState, g1r, g1rDone = g1.step(player2, random.randint(0,6))
@@ -119,10 +150,11 @@ class rl():
             g2done = 'not full'
             g2p2done = 'not full'
             for t in itertools.count():
+                print('Training - episode: ' + str(e + 1) + ' step: ' + str(t + 1))
                 if g1done == 'not full' and g1p2done == 'not full':
-                    print('Training - episode: ' + str(e + 1) + ' step: ' + str(t + 1))
                     g1nextState, g1reward, g1action, g1done = self.stateReward(p1q, g1state, self.color, g1, eta, gamma, epsilon)
-                    g1nextState, g1p2reward, g1p2action, g1p2done = self.stateReward(p2q, g1nextState, player2, g1, eta, gamma, epsilon)
+                    if g1done == 'not full':
+                        g1nextState, g1p2reward, g1p2action, g1p2done = self.stateReward(p2q, g1nextState, player2, g1, eta, gamma, epsilon)
                     if g1done == self.color:
                         g1reward += 50
                     if g1done == 'full' or g1p2done == 'full':
@@ -137,7 +169,8 @@ class rl():
                     continue
                 if g2done == 'not full' and g2p2done == 'not full':
                     g2nextState, g2p2reward, g2p2action, g2p2done = self.stateReward(p2q, g2state, 'black', g2, eta, gamma, epsilon)
-                    g2nextState, g2reward, g2action, g2done = self.stateReward(p1q, g2nextState, 'red', g2, eta, gamma, epsilon)
+                    if g2done == 'not full':
+                        g2nextState, g2reward, g2action, g2done = self.stateReward(p1q, g2nextState, 'red', g2, eta, gamma, epsilon)
                     if g2done == 'red':
                         g2reward += 50
                     if g2done == 'full' or g2p2done == 'full':
