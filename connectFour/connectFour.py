@@ -1,19 +1,20 @@
 import sys
 import cFour
 
+
 def main():
     if len(sys.argv) > 3:
         print('usage: python3 connectFour.py [String] [String] || python3 connectFour.py')
         return
-    if len(sys.argv) > 1 and len(sys.argv) < 3:
+    if 1 < len(sys.argv) < 3:
         print('usage: python3 connectFour.py [String] [String] || python3 connectFour.py')
         return
     c = cFour.cFour()
     turn = 1
     while True:
         c.display()
-        player = ''
-        if turn%2 == 1:
+        # player = ''
+        if turn % 2 == 1:
             player = 'black'
         else:
             player = 'red'
@@ -24,12 +25,11 @@ def main():
             print('Invalid column, try again.')
             continue
         winner, r = c.win()
-        if winner == 'Black' or winner == 'Red':
+        if winner == 'black' or winner == 'red':
             c.display()
             print(winner + ' wins!')
             return
         turn += 1
 
-    
 
 main()
