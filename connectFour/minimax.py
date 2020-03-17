@@ -50,30 +50,46 @@ class ConnectFour:
         :param player: Player's color we are checking
         :return: The bigger of the two counts (horizontal or vertical)
         """
-        n = 0
-        s = 0
-        e = 0
-        w = 0
+        n = 1
+        s = 1
+        e = 1
+        w = 1
+        nadd = True
+        sadd = True
+        eadd = True
+        wadd = True
 
-        # Check in the following order: s -> n -> w -> e
+        # Check in the following order: n -> s -> e -> w
         for count in range(1, 4):
-            if i + count < 6:
-                if self.grid[i + count][j] == player:
-                    s += 1
-            if i - count >= 0:
+            if i - count >= 0 and nadd:
                 if self.grid[i - count][j] == player:
                     n += 1
-            if j + count < 7:
-                if self.grid[i][j + count] == player:
-                    w += 1
-            if j - count >= 0:
+                else:
+                    nadd = False
+
+            if i + count < 6 and sadd:
+                if self.grid[i + count][j] == player:
+                    s += 1
+                else:
+                    sadd = False
+
+            if j - count >= 0 and eadd:
                 if self.grid[i][j - count] == player:
                     e += 1
-        r = e + w + 1
-        c = n + s + 1
-        if r > c:
-            return r
-        return c
+                else:
+                    eadd = False
+
+            if j + count < 7 and wadd:
+                if self.grid[i][j + count] == player:
+                    w += 1
+                else:
+                    wadd = False
+        # r = e + w + 1
+        # c = n + s + 1
+        # if r > c:
+        #     return r
+        # return c
+        return max(s, n, e, w)
 
     def checkDiag(self, i, j, player):
         """
@@ -88,38 +104,52 @@ class ConnectFour:
         :param player: Player's color we are checking
         :return: The bigger of the two counts (bottom left to top right or top left to bottom right)
         """
-        ne = 0
-        nw = 0
-        se = 0
-        sw = 0
+        ne = 1
+        nw = 1
+        se = 1
+        sw = 1
 
-        # check in order: se -> nw -> sw -> ne
+        neadd = True
+        nwadd = True
+        seadd = True
+        swadd = True
+
+        # check in order: ne -> nw -> se -> sw
         for count in range(1, 4):
-            # check se
-            if i + count < 6 and j + count < 7:
-                if self.grid[i + count][j + count] == player:
-                    se += 1
-
-            # check nw
-            if i - count >= 0 and j - count >= 0:
-                if self.grid[i - count][j - count] == player:
-                    nw += 1
-
-            # check sw
-            if i + count < 6 and j - count >= 0:
-                if self.grid[i + count][j - count] == player:
-                    sw += 1
-
             # check ne
-            if i - count >= 0 and j + count < 7:
+            if i - count >= 0 and j + count < 7 and neadd:
                 if self.grid[i - count][j + count] == player:
                     ne += 1
+                else:
+                    neadd = False
 
-        diag1 = se + nw + 1
-        diag2 = sw + ne + 1
-        if diag1 > diag2:
-            return diag1
-        return diag2
+            # check nw
+            if i - count >= 0 and j - count >= 0 and nwadd:
+                if self.grid[i - count][j - count] == player:
+                    nw += 1
+                else:
+                    nwadd = False
+
+            # check se
+            if i + count < 6 and j + count < 7 and seadd:
+                if self.grid[i + count][j + count] == player:
+                    se += 1
+                else:
+                    seadd = False
+
+            # check sw
+            if i + count < 6 and j - count >= 0 and swadd:
+                if self.grid[i + count][j - count] == player:
+                    sw += 1
+                else:
+                    swadd = False
+
+        # diag1 = se + nw + 1
+        # diag2 = sw + ne + 1
+        # if diag1 > diag2:
+        #     return diag1
+        # return diag2
+        return max(se, ne, nw, sw)
 
     def win(self):
         """
