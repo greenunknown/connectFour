@@ -71,7 +71,7 @@ class rl():
             nextState, reward, done = c4.step(player, action)
             r = reward
             if action == np.argmax(q[state]) and nextState == state:
-                action = epsilonGreedy(q, epsilon, state)
+                action = epsilonGreedy(q, 0.1, state)
                 nextState, reward, done = c4.step(player, action)
         return nextState, r, action, done
 

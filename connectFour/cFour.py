@@ -34,7 +34,7 @@ class cFour():
     def full(self):
         for i in range(6):
             for j in range(7):
-                if self.grid[i][j] != 'B' or self.grid[i][j] != 'R':
+                if self.grid[i][j] == 'O':
                     return 'not full'
         return 'full'
 
@@ -79,6 +79,7 @@ class cFour():
                     continue
         return self.full(), w
     '''
+
 
     def checkRC(self, i, j, player):
         n = 0
@@ -184,6 +185,7 @@ class cFour():
         return diag2
 
     def state(self):
+        #print('state')
         state = ''
         for i in range(6):
             for j in range(7):
@@ -191,6 +193,7 @@ class cFour():
         return state
 
     def step(self, player, action):#for rl algorithm
+        #print('step')
         reward, row = self.put(player, action)
         done, r2 = self.win(row, action)
         reward += r2

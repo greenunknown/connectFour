@@ -23,7 +23,7 @@ def main():
         if flag == -5:
             print('Invalid column, try again.')
             continue
-        winner, r = c.win()
+        winner, r = c.win(r, i)
         if winner == 'black' or winner == 'red':
             c.display()
             print(winner + ' wins!')
