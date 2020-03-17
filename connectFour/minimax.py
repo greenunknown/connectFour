@@ -209,9 +209,33 @@ class MinimaxConnectFour:
             return 0
 
 
-    def minimax(board, depth, isMax):
+    def minimax(self, depth, isMax):
         pass
 
 
-    def findBestMove(board):
+    def findBestMove(self, player, opponent):
         pass
+
+def main():
+    game = MinimaxConnectFour()
+
+    while not game.full():
+        game.display()
+        # Human
+        # print("Enter where you want to place pieces: ")
+        # player_input_x = input("row: ")
+        # player_input_y = input("col: ")
+        # board[int(player_input_x)][int(player_input_y)] = 'x'
+
+        bestMove = game.findBestMove(game.players[0], game.players[1])
+        game.place(game.players[0], bestMove)
+        print(f"The optimal move for {game.players[0]} is:\n")
+        print(f"Row: {bestMove}\n\n")
+
+        bestMove = game.findBestMove(game.players[1], game.players[0])
+        game.place(game.players[1], bestMove)
+        print(f"The optimal move for {game.players[1]} is:\n")
+        print(f"Row: {bestMove}\n\n")
+
+
+main()
