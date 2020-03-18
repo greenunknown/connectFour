@@ -45,10 +45,30 @@ class cFour():
         """
         for i in range(6):
             for j in range(7):
-                if self.grid[i][j] != 'B' or self.grid[i][j] != 'R':
+                if self.grid[i][j] == 'O':
                     return 'not full'
         return 'full'
 
+    def win(self, i, j):
+        color = self.grid[i][j]
+        if color == 'B':
+            player = 'black'
+        elif color == 'R':
+            player = 'red'
+        else:
+            print('error win check')
+            exit(-1)
+        rc = self.checkRC(i, j, color)
+        if rc >= 4:
+            return player, rc
+        diag = self.checkDiag(i, j, color)
+        if diag >= 4:
+            return player, diag
+        if rc > diag:
+            return self.full(), rc
+        return self.full(), diag
+        
+    '''
     def win(self):
         """
 
@@ -73,6 +93,8 @@ class cFour():
                 else:
                     continue
         return self.full(), w
+    '''
+
 
     def checkRC(self, i, j, player):
         """
@@ -91,21 +113,40 @@ class cFour():
         s = 0
         e = 0
         w = 0
-
-        # Check in the following order: s -> n -> w -> e
-        for count in range(1, 4):
+        scont = True
+        ncont = True
+        econt = True
+        wcont = True
+        for count in range(1,4):
+            #scont = True
             if i + count < 6:
                 if self.grid[i + count][j] == player:
-                    s += 1
+                    if scont == True:
+                        s += 1
+                else:
+                    scont = False
+            #ncont = True
             if i - count >= 0:
                 if self.grid[i - count][j] == player:
-                    n += 1
-            if j + count < 7:
-                if self.grid[i][j + count] == player:
-                    w += 1
+                    if ncont == True:
+                        n += 1
+                else:
+                    ncont = False
+            #wcont = True
             if j - count >= 0:
                 if self.grid[i][j - count] == player:
-                    e += 1
+                    if wcont == True:
+                        w += 1
+                else:
+                    wcont = False
+            #econt = True
+            if j + count < 7:
+                if self.grid[i][j + count] == player:
+                    if econt == True:
+                        e += 1
+                else:
+                    econt = False
+
         r = e + w + 1
         c = n + s + 1
         if r > c:
@@ -129,29 +170,46 @@ class cFour():
         nw = 0
         se = 0
         sw = 0
-
-        # check in order: se -> nw -> sw -> ne
-        for count in range(1, 4):
-            # check se
+        x = i
+        y = j
+        secont = True
+        swcont = True
+        nwcont = True
+        necont = True
+        #check in order: se -> nw -> sw -> ne
+        for count in range(1,4):
+            #secont = True
+            #check se
             if i + count < 6 and j + count < 7:
                 if self.grid[i + count][j + count] == player:
-                    se += 1
-
-            # check nw
+                    if secont == True:
+                        se += 1
+                else:
+                    secont = False
+            #nwcont = True
+            #check nw
             if i - count >= 0 and j - count >= 0:
                 if self.grid[i - count][j - count] == player:
-                    nw += 1
-
-            # check sw
+                    if nwcont == True:
+                        nw += 1
+                else:
+                    nwcont = False
+            #swcont = True
+            #check sw
             if i + count < 6 and j - count >= 0:
                 if self.grid[i + count][j - count] == player:
-                    sw += 1
-
-            # check ne
+                    if swcont == True:
+                        sw += 1
+                else:
+                    swcont = False
+            #necont = True
+            #check ne
             if i - count >= 0 and j + count < 7:
                 if self.grid[i - count][j + count] == player:
-                    ne += 1
-
+                    if necont == True:
+                        ne += 1
+                else:
+                    necont = False
         diag1 = se + nw + 1
         diag2 = sw + ne + 1
         if diag1 > diag2:
@@ -159,24 +217,16 @@ class cFour():
         return diag2
 
     def state(self):
-        """
-
-        :return: Return the state
-        """
         state = ''
         for i in range(6):
             for j in range(7):
                 state += self.grid[i][j]
         return state
 
-    def step(self, player, action):
-        """
-        Used in the RL algorithm to simulate moves.
-        :param player:
-        :param action:
-        :return:
-        """
+
+    def step(self, player, action):#for rl algorithm
+        #print('step')
         reward, row = self.put(player, action)
-        done, r2 = self.win()
+        done, r2 = self.win(row, action)
         reward += r2
         return self.state(), reward, done
