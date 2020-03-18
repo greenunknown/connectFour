@@ -2,6 +2,8 @@
 # Written based on code from:
 #  https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-3-tic-tac-toe-ai-finding-optimal-move/
 
+from time import sleep
+
 class MinimaxConnectFour:
     def __init__(self, difficulty = 42):
         self.grid = [['O' for i in range(7)] for j in range(6)]
@@ -309,7 +311,7 @@ class MinimaxConnectFour:
         for i in range(7):
             if self.amounts[i] < 5:
                 self.place(player, i)
-                moveVal = self.minimax(8, False, player, opponent, self.amounts[i], i)
+                moveVal = self.minimax(1, False, player, opponent, self.amounts[i], i)
                 self.remove(player, i)
 
                 if moveVal > bestVal:
@@ -337,6 +339,7 @@ def main():
         print(f"The optimal move for {game.players[0]} is:\n")
         print(f"Row: {bestMove}\n\n")
         game.display()
+        #sleep(2)
         if game.win(game.amounts[bestMove], bestMove) == game.players[0]:
             break
 
@@ -345,7 +348,8 @@ def main():
         print(f"The optimal move for {game.players[1]} is:\n")
         print(f"Row: {bestMove}\n\n")
         game.display()
-        if game.win(game.amounts[bestMove], bestMove) == game.players[0]:
+        #sleep(2)
+        if game.win(game.amounts[bestMove], bestMove) == game.players[1]:
             break
 
 def humanvsminimax():
