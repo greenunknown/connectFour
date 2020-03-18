@@ -35,7 +35,7 @@ class MinimaxConnectFour:
                     self.grid[5 - self.amounts[column]][column] = player
                     self.amounts[column] += 1
                     return [6 - self.amounts[column], column]
-            break
+            return [-1, -1]
 
     def remove(self, player, column):
         self.grid[6 - self.amounts[column]][column] = 'O'
@@ -193,33 +193,55 @@ class MinimaxConnectFour:
         else:
             return '...'
 
-    def altwin(self, row, col):
-        """
-        :param row: The row of the piece that was just placed.
-        :param col: The column of the piece that was just placed.
-        :return: The result of the lastest move if a player won, the game is a draw, or the game is ongoing
-        """
-        if self.grid[row][col] == self.players[0]:
-            w = self.checkRC(row, col, self.players[0])
-            if w >= 4:
-                return self.players[0], w
-            w = self.checkDiag(row, col, self.players[0])
-            if w >= 4:
-                return self.players[0], w
-        elif self.grid[row][col] == self.players[1]:
-            w = self.checkRC(row, col, self.players[1])
-            if w >= 4:
-                return self.players[1], w
-            w = self.checkDiag(row, col, self.players[1])
-            if w >= 4:
-                return self.players[1], w
-        else:
-            w = 0
+    def winningMove(self, player):
+        for i in range(7):
+            xy = self.place(player, i)
+            if xy[0] == -1:
+                continue
+            if self.win(xy[0], xy[1]) == player:
+                self.remove(player, i)
+                return i
+            self.remove(player, i)
+        return -1
 
-        if self.full():
-            return 'T', w
-        else:
-            return '...', w
+    def ifcenterfree(self, player):
+        xy = self.place(player, 3)
+        if xy[0] == -1:
+            return False
+        self.remove(player, 3)
+        return True
+
+    def freecorner(self):
+        if self.grid[5][0] == 'O':
+            return 0
+        if self.grid[5][6] == 'O':
+            return 6
+        return -1
+
+    def freeedge(self):
+        for i in range(7):
+            if self.grid[5][i] == 'O':
+                return i
+        for j in range(6):
+            if self.grid[j][6]:
+                return 6
+            if self.grid[j][0]:
+                return 0
+        return -1
+
+    def threat(self, player):
+        for i in range(7):
+            xy = self.place(player, i)
+            if xy[0] == -1:
+                return -1
+            win = self.winningMove(player)
+            if win != -1:
+                self.remove(player, i)
+                return win
+            self.remove(player, i)
+        return -1
+
+
 
 
     def evaluate(self, row, col):
@@ -233,40 +255,6 @@ class MinimaxConnectFour:
             return 1
         else:
             return 0
-
-    def altevaluate(self, row, col):
-        winner, moveval = self.altwin(row, col)
-        if winner == self.players[0]:
-            return 22
-        elif winner == self.players[1]:
-            return -22
-        elif winner == 'T':
-            return 0
-        else:
-            return moveval
-
-
-
-    def altminimax(self, depth, isMax, player, opponent, row, col, score = 0):
-        score = self.altevaluate(row, col)
-        if depth == 42 or abs(score) == 22:
-            return score
-        if isMax:
-            best = -1000
-            for i in range(7):
-                if self.amounts[i] < 5:
-                    self.place(player, i)
-                    best = max(best, self.altminimax(depth + 1, not isMax, opponent, player, self.amounts[i], i, score = score))
-                    self.remove(player, i)
-            return best
-        else:
-            best = 1000
-            for i in range(7):
-                if self.amounts[i] < 5:
-                    self.place(player, i)
-                    best = min(best, self.altminimax(depth + 1, not isMax, opponent, player, self.amounts[i], i, score = score))
-                    self.remove(player, i)
-            return best
       
 
     def minimax(self, depth, isMax, player, opponent, row, col):
@@ -283,6 +271,8 @@ class MinimaxConnectFour:
             for i in range(7):
                 if self.amounts[i] < 6:
                     xy = self.place(player, i)
+                    if xy[0] == -1:
+                        continue
                     best = max(best, self.minimax(depth - 1, not isMax, player, opponent, xy[0], xy[1]))
                     self.remove(player, i)
             return best
@@ -291,30 +281,39 @@ class MinimaxConnectFour:
             for i in range(7):
                 if self.amounts[i] < 6:
                     xy = self.place(opponent, i)
+                    if xy[0] == -1:
+                        continue
                     best = max(best, self.minimax(depth - 1, not isMax, player, opponent, xy[0], xy[1]))
                     self.remove(opponent, i)
             return best
 
-    def altfindBestMove(self, player, opponent):
-        bestVal = -1000
-        bestMove = -1
-        for i in range(7):
-            if self.amounts[i] < 6:
-                #self.place(player, i)
-                moveVal = self.altminimax(self.maxDepth, True, player, opponent, self.amounts[i], i)
-                #self.remove(player, i)
-                if moveVal > bestVal:
-                    bestMove = i
-                    bestVal = moveVal
-        print(f"The value of the best move is: {bestMove}\n\n")
-        return bestMove
 
     def findBestMove(self, player, opponent):
+        winmove = self.winningMove(player)
+        if winmove != -1:
+            return winmove
+        winmove = self.winningMove(opponent)
+        if winmove != -1:
+            return winmove
+        threat = self.threat(opponent)
+        if threat != -1:
+            return threat
+        if self.ifcenterfree(player):
+            return 3
+        corner = self.freecorner()
+        if corner != -1:
+            return corner
+        edge = self.freeedge()
+        if edge != -1:
+            return edge
+
         bestVal = -1000
         bestMove = -1
         for i in range(7):
             if self.amounts[i] < 6:
                 xy = self.place(player, i)
+                if xy[0] == -1:
+                    continue
                 moveVal = self.minimax(1, False, player, opponent, xy[0], xy[1])
                 self.remove(player, i)
 
@@ -340,6 +339,8 @@ def main():
         bestMove = game.findBestMove(game.players[0], game.players[1])
         print("Placing piece")
         xy = game.place(game.players[0], bestMove)
+        if x[0] == -1:
+            continue
         print('placed in: ' + str(xy[0]) + ',' + str(xy[1]))
         print(f"The optimal move for {game.players[0]} is:\n")
         print(f"Row: {bestMove}\n\n")
@@ -349,6 +350,8 @@ def main():
             break
         bestMove = game.findBestMove(game.players[1], game.players[0])
         xy = game.place(game.players[1], bestMove)
+        if x[0] == -1:
+            continue
         print(f"The optimal move for {game.players[1]} is:\n")
         print(f"Row: {bestMove}\n\n")
         game.display()
@@ -377,5 +380,5 @@ def humanvsminimax():
 
 
 #main()
-humanvsminimax()
+#humanvsminimax()
 #minimaxvsminimax()
