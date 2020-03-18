@@ -7,12 +7,14 @@ from collections import defaultdict
 
 random.seed(datetime.now())
 
+
 def epsilonGreedy(q, epsilon, state):
     threshold = 1 - epsilon
     i = random.random()
     if i < threshold:
         return np.argmax(q[state])
     return random.randint(0, 6)
+
 
 def copyQ(q, actionSpace):
     newq = defaultdict(lambda: np.zeros(actionSpace))
@@ -47,16 +49,13 @@ def loadQTable(fileName, color):
         index += 2
     return rl(color, cFour.cFour(), qtable)
 
-
 def dataCalc(fileName):
     return
-
 class rl():
-    def __init__(self, color, board, q = None):
-        #super().__init__(color, board)
+    def __init__(self, color, board, q=None):
         self.color = color
         self.board = board
-        self.actionSpace = 7#action space is 7 (can place is piece in any of 7 columns
+        self.actionSpace = 7  # action space is 7 (can place is piece in any of 7 columns
         self.q = q
         self.episodeRewards = None
 
@@ -75,7 +74,7 @@ class rl():
                 nextState, reward, done = c4.step(player, action)
         return nextState, r, action, done
 
-    def qLearningInit(self, episodes = 100000, eta = 0.5, gamma = 0.9, epsilon = 0.1):
+    def qLearningInit(self, episodes=100000, eta=0.5, gamma=0.9, epsilon=0.1):
         q = defaultdict(lambda: np.zeros(self.actionSpace))
         #q2 = defaultdict(lambda: np.zeros(self.actionSpace))
         player2 = None
@@ -117,7 +116,7 @@ class rl():
                 continue
             if g2done == 'not full' and g1rDone == 'not full':
                 g2nextState, g2r, g2rDone = g2.step('black', random.randint(0,6))
-                while g2nextState == g2state:#prevent same state assignment
+                while g2nextState == g2state:  # prevent same state assignment
                     g2nextState, g2r, g2rDone = g2.step('black', random.randint(0,6))
                 g2nextState, g2reward, g2action, g2done = self.stateReward(q, g2state, 'red', g2, eta, gamma, epsilon)
                 if g2done == 'red':
@@ -186,13 +185,13 @@ class rl():
                 self.q = p1q
                 p2q = copyQ(p1q, self.actionSpace)
                 break
-            #decrease epsilon
-            if(e + 1) % 50 == 0:
-                if(epsilon > 0):
+            # decrease epsilon
+            if (e + 1) % 50 == 0:
+                if epsilon > 0:
                     epsilon -= .001
         return self.q, g1episodeRewards, g2episodeRewards
 
-    def testHuman(self, eta = 0.2, gamma = 0.9, epsilon = 0.1):
+    def testHuman(self, eta=0.2, gamma=0.9, epsilon=0.1):
         q = self.q
         self.board = cFour.cFour()
         c4 = self.board
