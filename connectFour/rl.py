@@ -23,6 +23,7 @@ def copyQ(q, actionSpace):
     return newq
 
 def loadQTable(fileName, color):
+    print('loading qtable, this might take a while...')
     with open(fileName) as f_obj:
         lines = f_obj.readlines()
     index = 0
@@ -44,8 +45,8 @@ def loadQTable(fileName, color):
 
         for i in range(len(qtable[state])):
             qtable[state][i] += fvalues[i]
-        print(qtable[state])
-        print(fvalues)
+        #print(qtable[state])
+        #print(fvalues)
         index += 2
     return rl(color, cFour.cFour(), qtable)
 

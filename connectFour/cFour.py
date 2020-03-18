@@ -3,8 +3,11 @@ class cFour():
     A connect four board and methods to manipulate and
     get information about the board.
     """
-    def __init__(self):
-        self.grid = [['O' for i in range(7)] for j in range(6)]
+    def __init__(self, grid = None):
+        if grid == None:
+            self.grid = [['O' for i in range(7)] for j in range(6)]
+        else:
+            self.grid = grid#pointer so that can access same game as opponent
         self.score = {'Red': 0, 'Black': 0, 'Winner': ''}
         self.amounts = [0, 0, 0, 0, 0, 0, 0]
 

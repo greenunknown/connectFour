@@ -223,9 +223,9 @@ class MinimaxConnectFour:
             if self.grid[5][i] == 'O':
                 return i
         for j in range(6):
-            if self.grid[j][6]:
+            if self.grid[j][6] == 'O':
                 return 6
-            if self.grid[j][0]:
+            if self.grid[j][0] == 'O':
                 return 0
         return -1
 
@@ -339,7 +339,7 @@ def main():
         bestMove = game.findBestMove(game.players[0], game.players[1])
         print("Placing piece")
         xy = game.place(game.players[0], bestMove)
-        if x[0] == -1:
+        if xy[0] == -1:
             continue
         print('placed in: ' + str(xy[0]) + ',' + str(xy[1]))
         print(f"The optimal move for {game.players[0]} is:\n")
