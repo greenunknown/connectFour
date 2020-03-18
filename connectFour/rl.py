@@ -150,7 +150,7 @@ class rl():
             g2done = 'not full'
             g2p2done = 'not full'
             for t in itertools.count():
-                print('Training - episode: ' + str(e + 1) + ' step: ' + str(t + 1))
+                #print('Training - episode: ' + str(e + 1) + ' step: ' + str(t + 1))
                 if g1done == 'not full' and g1p2done == 'not full':
                     g1nextState, g1reward, g1action, g1done = self.stateReward(p1q, g1state, self.color, g1, eta, gamma, epsilon)
                     if g1done == 'not full':
