@@ -213,7 +213,7 @@ class MinimaxConnectFour:
             for i in range(7):
                 if self.amounts[i] < 5:
                     self.place(player, i)
-                    best = max(best, self.minimax(depth + 1, not isMax, player, opponent))
+                    best = max(best, self.minimax(depth + 1, not isMax, player, opponent, self.amounts[i], i))
                     self.remove(player, i)
             return best
         else:
@@ -221,7 +221,7 @@ class MinimaxConnectFour:
             for i in range(7):
                 if self.amounts[i] < 5:
                     self.place(opponent, i)
-                    best = max(best, self.minimax(depth + 1, not isMax, player, opponent))
+                    best = max(best, self.minimax(depth + 1, not isMax, player, opponent, self.amounts[i], i))
                     self.remove(opponent, i)
             return best
 
