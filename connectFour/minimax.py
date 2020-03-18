@@ -220,9 +220,9 @@ class MinimaxConnectFour:
             best = 1000
             for i in range(7):
                 if self.amounts[i] < 5:
-                    self.place(player, i)
+                    self.place(opponent, i)
                     best = max(best, self.minimax(depth + 1, not isMax, player, opponent))
-                    self.remove(player, i)
+                    self.remove(opponent, i)
             return best
 
     def findBestMove(self, player, opponent):
