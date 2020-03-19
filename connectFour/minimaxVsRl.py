@@ -219,7 +219,7 @@ def humanvsmini():
             game.display()
             if game.win(xy[0], xy[1]) == game.players[1]:
                 print('AI wins')
-                winenrs.append('minimax')
+                winners.append('minimax')
                 break
             if game.full():
                 print('draw')
