@@ -143,7 +143,7 @@ def humanvsrl(bot):
                     winners.append('draw')
                     break
                 print('You win')
-                winners.appen('player')
+                winners.append('player')
                 break
             print('AI turn')
             nextState, reward, action, done = bot.stateReward(bot.q, state, 'red', c4, 0.2, 0.9, 0.1)
