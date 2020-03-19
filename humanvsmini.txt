@@ -1,0 +1,10 @@
+player
+player
+player
+minimax
+player
+player
+player
+player
+player
+minimax
